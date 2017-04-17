@@ -30,3 +30,8 @@ dly_usecols = [1,2,3] + [4*i for i in range(1,32)]
 dly_dtype = [np.int32,np.int32,(np.str_,4)] + [np.int32] * 31
 dly_names = ['year','month','obs'] + [str(day) for day in range(1,31+1)]
 lihue = parsefile('USW00022536.dly')
+def unroll(record):
+	startdate = np.datetime64('{}-{:02}'.format(record['year'],record['month']))
+	dates = np.arange(startdate,startdate + np.timedelta64(1,'M'),np.timedelta64(1,'D'))
+	rows = [(date,record[str(i+1)]/10) for i,date in enumerate(dates)]
+	return np.array(rows,dtype=[('date','M8[D]'),('value','d')])
